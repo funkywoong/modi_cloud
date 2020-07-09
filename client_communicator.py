@@ -6,6 +6,7 @@ import json
 import os
 import wave
 
+from mlsocket import MLSocket
 from sys import getsizeof
 
 BUFFERSIZE = 2**10
@@ -14,31 +15,32 @@ class Client():
     
     def __init__(self):
         self.__reply = str()
+        self.client_socket = None
 
     def run(self):
-        meta_filename = input('json filename : ')
+        # meta_filename = input('json filename : ')
 
-        try:
-            with open(meta_filename,'rb') as f:
-                user_metadata = json.load(f)
-        except:
-            print('json load error')
-            sys.exit()
+        # try:
+        #     with open(meta_filename,'rb') as f:
+        #         user_metadata = json.load(f)
+        # except:
+        #     print('json load error')
+        #     sys.exit()
 
-        user_name = user_metadata['USER']
-        host = user_metadata['HOST']
-        port = user_metadata['PORT']
-        work_space = user_metadata['WORK_SPACE']
-        project_name = user_metadata['PROJECT_NAME']
-        file_type = user_metadata['FILE_TYPE']
-        project_path = os.path.join(work_space,project_name)
-        label_list = user_metadata['LABELS']
+        # user_name = user_metadata['USER']
+        # host = user_metadata['HOST']
+        # port = user_metadata['PORT']
+        # work_space = user_metadata['WORK_SPACE']
+        # project_name = user_metadata['PROJECT_NAME']
+        # file_type = user_metadata['FILE_TYPE']
+        # project_path = os.path.join(work_space,project_name)
+        # label_list = user_metadata['LABELS']
 
         # with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as client_socket:
-        client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        client_socket.connect((host,port))
+        self.client_socket = MLSocket()
+        self.client_socket.connect((host,port))
 
-        client = Client()
+        # client = Client()
 
         receive_thread = threading.Thread(target=client.handle_receive, args=(1,client_socket,user_name,project_path,label_list))
         receive_thread.daemon = True
@@ -55,13 +57,11 @@ class Client():
     def handle_receive(self,num,client_socket,user,project_path,label_list):
         """ thread of receiving messages sent by server 
         """
-        while 1:
+        # while 1:
             try:
                 self.__reply = client_socket.recv(BUFFERSIZE)
-                self.__reply = self.__reply.decode()
                 print(self.__reply)
-    
-                if self.__reply == 'completed': raise OSError
+                # if self.__reply == 'completed': raise OSError
             except:
                 print('disconnected')
                 break
