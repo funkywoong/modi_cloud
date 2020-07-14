@@ -58,13 +58,13 @@ class Client():
         """ thread of receiving messages sent by server 
         """
         # while 1:
-            try:
-                self.__reply = client_socket.recv(BUFFERSIZE)
-                print(self.__reply)
-                # if self.__reply == 'completed': raise OSError
-            except:
-                print('disconnected')
-                break
+        try:
+            self.__reply = client_socket.recv(BUFFERSIZE)
+            print(self.__reply)
+            # if self.__reply == 'completed': raise OSError
+        except:
+            print('disconnected')
+            break
 
         print('thread exit')
 
@@ -155,6 +155,17 @@ class Client():
         """
 
 if __name__ == "__main__":
+    
+    # Make an ndarray
+    data = np.array([1, 2, 3, 4])
+
+    # Make a keras model
+    model = Sequential()
+    model.add(Dense(8, input_shape=(None, 4)))
+    model.compile(optimizer='adam', loss='binary_crossentropy')
+
+    # Make a scikit-learn classifier
+    clf = svm.SVC(gamma=0.00314)
     
     client = Client()
     client.run()
