@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package modi_cloud;
+
+service Data_Model_Handler{
+    rpc SendObjects (ObjectsSend) returns (ModelReply);
+    rpc SendObjectsAgain (ObjectsSend) returns (ModelReply);
+}
+
+service Complete_Handler{
+    rpc TransferComplete (TransferCompleteSend) returns (TransferCompleteReply);
+    rpc LearningComplete (LearningCompleteSend) returns (LearningCompleteReply);
+}
+
+message ObjectsSend{
+    bytes train_array = 1;
+    bytes label_array = 2;
+    bytes model = 3;
+
+    /*
+    enum Model_type= {
+        HDF = 0;
+        SKLEARN = 0;
+    }
+
+    optional Model_type model_type = 4; [default = HDF]
+    */
+}
+
+message TransferCompleteSend{
+    int32 ask_transfer = 1;
+}
+
+message LearningCompleteSend{
+    int32 ask_learning = 1;
+}
+
+message TransferCompleteReply{
+    int32 reply_transfer = 1;
+}
+
+message LearningCompleteReply{
+    int32 reply_learning = 1;
+}
+
+message ModelReply{
+    bytes trained_model = 1;
+}
