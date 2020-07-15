@@ -9,10 +9,10 @@ from joblib import load, dump
 from concurrent import futures
 from io import BytesIO
 
-from modi_cloud.util.modi_ai_cloud_pb2.py
-from modi_cloud.util.modi_ai_cloud_pb2_grpc.py
+import util.modi_ai_cloud_pb2 as pb2
+import util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
-class Data_model_handler(modi_ai_cloud_pb2_grpc.Data_Model_HandlerServicer):
+class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
     def __init__(self):
         super().__init__()
@@ -30,13 +30,13 @@ class Data_model_handler(modi_ai_cloud_pb2_grpc.Data_Model_HandlerServicer):
 
         tmp_reply = bytes(b'complete')
         print('bye')
-        return modi_ai_cloud_pb2.ModelReply(trained_model=tmp_reply)
+        return pb2.ModelReply(trained_model=tmp_reply)
 
     def TransferComplete(self, request, context):
         if request.ask_transfer:
             self.__trns_flag.wait()
 
-        return modi_ai_cloud_pb2.TransferCompleteReply(reply_transfer=-1)
+        return pb2.TransferCompleteReply(reply_transfer=-1)
 
             
 
@@ -92,7 +92,7 @@ class Data_model_handler(modi_ai_cloud_pb2_grpc.Data_Model_HandlerServicer):
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    numpy_test_pb2_grpc.add_Data_Model_HandlerServicer_to_server(Data_model_handler(), server)
+    pb2_grpc.add_Data_Model_HandlerServicer_to_server(Data_model_handler(), server)
     server.add_insecure_port('[::]:8000')
     server.start()
     print('server start')
