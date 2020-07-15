@@ -1,21 +1,22 @@
+from __future__ import print_function
+
 import logging
 import grpc
 import h5py
 import numpy as np
 import numpy as np
 
-from __future__ import print_function
 from io import BytesIO 
 from joblib import load, dump
 
-from modi_cloud.util.modi_ai_cloud_pb2.py
-from modi_cloud.util.modi_ai_cloud_pb2_grpc.py
+import util.modi_ai_cloud_pb2 as pb2
+import util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
 def __parse_data(target):
     if isinstance(target, bytes):
         return target
     buf = BytesIO()
-    if isinstance(data, np.ndarray):
+    if isinstance(target, np.ndarray):
         np.save(buf, target, allow_pickle=True)
     elif 'keras' in str(type(target)):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -47,16 +48,16 @@ def run():
     tmp_model = None
 
     with grpc.insecure_channel('ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000') as channel:
-        client_stub = modi_ai_cloud_pb2_grpc.Data_Model_HandlerStub(channel)
+        client_stub = pb2_grpc.Data_Model_HandlerStub(channel)
         response_transfer = client_stub.SendObjects(
-            modi_ai_cloud_pb2.TransferCompleteSend(ask_transfer=1)
+            pb2.TransferCompleteSend(ask_transfer=1)
         )
         response_train = client_stub.SendObjects(
-            modi_ai_cloud_pb2.ObjectsSend(
-                target_array=tmp_train_list, label_arrary=tmp_label_list, model=tmp_model)
+            pb2.ObjectsSend(
+                train_array=tmp_train_list, label_array=tmp_label_list, model=tmp_model)
         )
 
-    print("Label handler client received: ", response_transfer.reply_transfer)
+    print("Label handler client received: ", response_transfer)
  
 if __name__ == '__main__':
     logging.basicConfig()
