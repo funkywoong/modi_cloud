@@ -3,8 +3,8 @@ syntax = "proto3";
 package modi_cloud;
 
 service Data_Model_Handler{
-    rpc SendObjects (ObjectsSend) returns (ModelReply);
-    rpc SendObjectsAgain (ObjectsSend) returns (ModelReply);
+    rpc SendObjects (stream ObjectsSend) returns (stream ModelReply);
+    rpc SendObjectsAgain (stream ObjectsSend) returns (stream ModelReply);
 
     rpc TransferComplete (TransferCompleteSend) returns (TransferCompleteReply);
     rpc LearningComplete (LearningCompleteSend) returns (LearningCompleteReply);
