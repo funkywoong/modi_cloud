@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import util.modi_ai_cloud_pb2 as modi__ai__cloud__pb2
+import modi_ai_cloud_pb2 as modi__ai__cloud__pb2
 
 
 class Data_Model_HandlerStub(object):
@@ -14,12 +14,12 @@ class Data_Model_HandlerStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SendObjects = channel.unary_unary(
+        self.SendObjects = channel.stream_stream(
                 '/modi_cloud.Data_Model_Handler/SendObjects',
                 request_serializer=modi__ai__cloud__pb2.ObjectsSend.SerializeToString,
                 response_deserializer=modi__ai__cloud__pb2.ModelReply.FromString,
                 )
-        self.SendObjectsAgain = channel.unary_unary(
+        self.SendObjectsAgain = channel.stream_stream(
                 '/modi_cloud.Data_Model_Handler/SendObjectsAgain',
                 request_serializer=modi__ai__cloud__pb2.ObjectsSend.SerializeToString,
                 response_deserializer=modi__ai__cloud__pb2.ModelReply.FromString,
@@ -39,13 +39,13 @@ class Data_Model_HandlerStub(object):
 class Data_Model_HandlerServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def SendObjects(self, request, context):
+    def SendObjects(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SendObjectsAgain(self, request, context):
+    def SendObjectsAgain(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -66,12 +66,12 @@ class Data_Model_HandlerServicer(object):
 
 def add_Data_Model_HandlerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SendObjects': grpc.unary_unary_rpc_method_handler(
+            'SendObjects': grpc.stream_stream_rpc_method_handler(
                     servicer.SendObjects,
                     request_deserializer=modi__ai__cloud__pb2.ObjectsSend.FromString,
                     response_serializer=modi__ai__cloud__pb2.ModelReply.SerializeToString,
             ),
-            'SendObjectsAgain': grpc.unary_unary_rpc_method_handler(
+            'SendObjectsAgain': grpc.stream_stream_rpc_method_handler(
                     servicer.SendObjectsAgain,
                     request_deserializer=modi__ai__cloud__pb2.ObjectsSend.FromString,
                     response_serializer=modi__ai__cloud__pb2.ModelReply.SerializeToString,
@@ -97,7 +97,7 @@ class Data_Model_Handler(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SendObjects(request,
+    def SendObjects(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -106,14 +106,14 @@ class Data_Model_Handler(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/modi_cloud.Data_Model_Handler/SendObjects',
+        return grpc.experimental.stream_stream(request_iterator, target, '/modi_cloud.Data_Model_Handler/SendObjects',
             modi__ai__cloud__pb2.ObjectsSend.SerializeToString,
             modi__ai__cloud__pb2.ModelReply.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def SendObjectsAgain(request,
+    def SendObjectsAgain(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -122,7 +122,7 @@ class Data_Model_Handler(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/modi_cloud.Data_Model_Handler/SendObjectsAgain',
+        return grpc.experimental.stream_stream(request_iterator, target, '/modi_cloud.Data_Model_Handler/SendObjectsAgain',
             modi__ai__cloud__pb2.ObjectsSend.SerializeToString,
             modi__ai__cloud__pb2.ModelReply.FromString,
             options, channel_credentials,

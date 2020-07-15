@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"F\n\x0bObjectsSend\x12\x13\n\x0btrain_array\x18\x01 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\x0c\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\xcb\x02\n\x12\x44\x61ta_Model_Handler\x12>\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12\x43\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReplyb\x06proto3'
+  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"F\n\x0bObjectsSend\x12\x13\n\x0btrain_array\x18\x01 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\x0c\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\xd3\x02\n\x12\x44\x61ta_Model_Handler\x12\x42\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply(\x01\x30\x01\x12G\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply(\x01\x30\x01\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReplyb\x06proto3'
 )
 
 
@@ -290,7 +290,7 @@ _DATA_MODEL_HANDLER = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=335,
-  serialized_end=666,
+  serialized_end=674,
   methods=[
   _descriptor.MethodDescriptor(
     name='SendObjects',
