@@ -1,5 +1,5 @@
 import time
-import logging
+import logging, os
 import grpc
 import h5py
 import numpy as np
@@ -12,27 +12,36 @@ from io import BytesIO
 import util.modi_ai_cloud_pb2 as pb2
 import util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
+MESSAGE_SIZE = 1024 * 1024 * 200
+
 class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
-    def __init__(self):
-        super().__init__()
+    # def __init__(self):
+    #     super().__init__()
 
-        self.__trns_flag = th.Event()
+    #     self.__trns_flag = th.Event()
 
+    def __watchdog(self):
+        pass
+        
     def SendObjects(self, request, context):
 
+        print('in SendObjects')
         train_data = self.__load_data(request.train_array)
+        print(train_data)
         label_data = self.__load_data(request.label_array)
+        print(label_data)
         model = self.__load_data(request.model)
+        print(model)
 
+        tmp_reply = b'complete'
         if not self.__is_transfer_ok(train_data, label_data, model):
-            self.__trns_flag.set()
+            return pb2.ModelReply(trained_model=None)
 
-        tmp_reply = bytes(b'complete')
-        print('bye')
         return pb2.ModelReply(trained_model=tmp_reply)
 
     def TransferComplete(self, request, context):
+        print(request.ask_transfer)
         if request.ask_transfer:
             self.__trns_flag.wait()
 
@@ -62,9 +71,12 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         elif b'HDF' in data_type:
             os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
             from tensorflow.keras.models import load_model
-            with h5py.File(target, 'r') as f:
-                model = load_model(f)
-            return model
+            try:
+                with h5py.File(target, 'r') as f:
+                    given_model = load_model(f)
+                return given_model
+            except Exception as e:
+                print(e)
         else:
             return None
 
@@ -91,7 +103,10 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 #     else: return -1
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), options=[
+        ('grpc.max_send_message_length', MESSAGE_SIZE),
+        ('grpc.max_receive_message_length', MESSAGE_SIZE)
+    ])
     pb2_grpc.add_Data_Model_HandlerServicer_to_server(Data_model_handler(), server)
     server.add_insecure_port('[::]:8000')
     server.start()
