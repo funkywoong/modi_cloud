@@ -21,11 +21,11 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
     def SendObjects(self, request, context):
 
-        train_data = __load_data(request.train_array)
-        label_data = __load_data(request.label_array)
-        model = __load_data(request.model)
+        train_data = self.__load_data(request.train_array)
+        label_data = self.__load_data(request.label_array)
+        model = self.__load_data(request.model)
 
-        if not __is_transfer_ok(train_data, label_data, model):
+        if not self.__is_transfer_ok(train_data, label_data, model):
             self.__trns_flag.set()
 
         tmp_reply = bytes(b'complete')
