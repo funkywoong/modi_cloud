@@ -71,12 +71,14 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         elif b'HDF' in data_type:
             os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
             from tensorflow.keras.models import load_model
-            try:
-                with h5py.File(target, 'r') as f:
-                    given_model = load_model(f)
-                return given_model
-            except Exception as e:
-                print(e)
+            # try:
+            print('in')
+            with h5py.File(target, 'r') as f:
+                given_model = load_model(f)
+            print('out')
+            return given_model
+            # except Exception as e:
+                # print(e)
         else:
             return None
 
