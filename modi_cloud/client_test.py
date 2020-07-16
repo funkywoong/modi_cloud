@@ -35,14 +35,18 @@ def __parse_data(target):
 
 def run():
 
-    X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
+    # X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
     model = gen_model()
-    X_train = __parse_data(X_train)
-    y_train = __parse_data(y_train)
+    # X_train = __parse_data(X_train)
+    # y_train = __parse_data(y_train)
     model = __parse_data(model)
-    print(sys.getsizeof(X_train))
-    print(sys.getsizeof(y_train))
-    print(sys.getsizeof(model))
+    # print(sys.getsizeof(X_train))
+    # print(sys.getsizeof(y_train))
+    # print(sys.getsizeof(model))
+    tmp_train_list = np.array([1, 2, 3, 4])
+    tmp_train_list = __parse_data(tmp_train_list)
+    tmp_label_list = np.array([5, 6, 7, 8])
+    tmp_label_list = __parse_data(tmp_label_list)
 
     with grpc.insecure_channel('ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000') as channel:
         client_stub = pb2_grpc.Data_Model_HandlerStub(channel)
@@ -51,7 +55,7 @@ def run():
         # )
         response_train = client_stub.SendObjects(
             pb2.ObjectsSend(
-                train_array=X_train, label_array=y_train, model=model)
+                train_array=tmp_train_list, label_array=tmp_label_list, model=model)
         )
         print('out request')
 
