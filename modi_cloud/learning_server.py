@@ -33,7 +33,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         hist, trained_model = self.__training(train_data, label_data, model)
         print(type(hist))
         print(type(trained_model))
-        trained_model = self.__parse_data(trained_model)
+        trained_model = codec.parse_data(trained_model)
         
         return pb2.ModelReply(trained_model=trained_model)
 
