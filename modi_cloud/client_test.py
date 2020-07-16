@@ -5,6 +5,7 @@ import grpc
 import h5py
 import numpy as np
 import numpy as np
+import sys
 
 from io import BytesIO 
 from joblib import load, dump
@@ -36,8 +37,12 @@ def run():
 
     X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
     model = gen_model()
-    print(type(X_train))
-    print(type(model))
+    X_train = __parse_data(X_train)
+    y_train = __parse_data(y_train)
+    model = __parse_data(model)
+    print(sys.getsizeof(X_train))
+    print(sys.getsizeof(y_train))
+    print(sys.getsizeof(model))
 
     with grpc.insecure_channel('ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000') as channel:
         client_stub = pb2_grpc.Data_Model_HandlerStub(channel)
@@ -46,8 +51,9 @@ def run():
         # )
         response_train = client_stub.SendObjects(
             pb2.ObjectsSend(
-                train_array=__parse_data(X_train), label_array=__parse_data(y_train), model=__parse_data(model))
+                train_array=X_train, label_array=y_train, model=model)
         )
+        print('out request')
 
     print("Label handler client received: ", response_train)
  
