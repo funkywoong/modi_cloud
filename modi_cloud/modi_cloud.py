@@ -47,10 +47,6 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
         return pb2.TransferCompleteReply(reply_transfer=-1)
 
-            
-
-        #TODO: training data by using given model
-
     def __is_transfer_ok(self, train_data, label_data, model):
         return(
             train_data is not None and
@@ -67,42 +63,15 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         if b'NUMPY' in data_type:
             return np.load(buf)
         elif b'sklearn' in data_type:
-            return load(target)
+            return load(buf)
         elif b'HDF' in data_type:
             os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
             from tensorflow.keras.models import load_model
-            # try:
-            print('in')
-            with h5py.File(target, 'r') as f:
+            with h5py.File(buf, 'r') as f:
                 given_model = load_model(f)
-            print('out')
             return given_model
-            # except Exception as e:
-                # print(e)
         else:
             return None
-
-        
-
-    # def SendArray(self, request, context):
-    #     print('train')
-    #     target = deserialize(request.target_array)
-    #     print(target)
-    #     if target is not None:
-    #         return numpy_test_pb2.CompleteReply(complete=1)
-    #     else: return numpy_test_pb2.CompleteReply(complete=-1)
-
-# def deserialize(target):
-#     buf = BytesIO()
-#     buf.write(target)
-#     buf.seek(0)
-#     data_type = buf.read()[:-3]
-#     buf.seek(0)
-
-#     if b'NUMPY' in data_type:
-#         print('in')
-#         return np.load(buf)
-#     else: return -1
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), options=[

@@ -48,7 +48,8 @@ def run():
     tmp_label_list = np.array([5, 6, 7, 8])
     tmp_label_list = __parse_data(tmp_label_list)
 
-    with grpc.insecure_channel('ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000') as channel:
+    # with grpc.insecure_channel('ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000') as channel:
+    with grpc.insecure_channel('localhost:8000') as channel:
         client_stub = pb2_grpc.Data_Model_HandlerStub(channel)
         # response_transfer = client_stub.TransferComplete(
         #     pb2.TransferCompleteSend(ask_transfer=1)
