@@ -38,7 +38,10 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         return pb2.ModelReply(trained_model=trained_model)
 
     def TransferComplete(self, request, context):
-
+        
+        if request.ask_transfer:
+            return pb2.TransferCompleteReply(reply_transfer=1)
+        
         return pb2.TransferCompleteReply(reply_transfer=-1)
 
     def __training(self, X_train, y_train, model):
