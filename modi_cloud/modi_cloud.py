@@ -1,11 +1,10 @@
 from __future__ import print_function
 
-import logging, os
+import logging, os, time, sys
 import grpc
 import h5py
 import numpy as np
 import numpy as np
-import sys
 import threading as th
 
 from io import BytesIO 
@@ -43,10 +42,14 @@ class MODI_model():
             req_train_th = th.Thread(target=self.__req_training, daemon=True)
             req_train_th.start()
 
-            req_std_th = th.Thread(target=self.__req_trns_complete, daemon=True)
+            req_trns_th = th.Thread(target=self.__req_trns_complete, daemon=True)
+            req_trns_th.start()
+
+            req_std_th = th.Thread(target=self.__req_gpu_stdout, daemon=True)
             req_std_th.start()
 
             req_train_th.join()
+            req_trns_th.join()
             req_std_th.join()
         
         return self.__trained_model
@@ -68,7 +71,10 @@ class MODI_model():
         if response_transfer: self.__trns_flag.set()
         print(response_transfer.reply_transfer)
 
-    def __req_gpu_stdout(self):        
+    def __req_gpu_stdout(self):
+
+        CURSOR_UP_ONE = '\x1b[1A'
+        ERASE_LINE = '\x1b[2K'        
         
         self.__trns_flag.wait()
         input_stream = self.__client_stub.MonitorLearning(
@@ -77,11 +83,16 @@ class MODI_model():
 
         def __read_incoming():
             while 1:
-                item = next(input_stream).reply_stdout
-                print('received : {}'.format(item))
-                if item == 'End':
+                try:
+                    item = next(input_stream).reply_stdout
+                    sys.stdout.write(CURSOR_UP_ONE)
+                    sys.stdout.write(ERASE_LINE)
+                    print(item)
+                    if item == 'End':
+                        break
+                    time.sleep(0.05)
+                except:
                     break
-                time.sleep(0.05)
 
         read_th = th.Thread(target=__read_incoming, daemon=True)
         read_th.start()
@@ -95,8 +106,8 @@ if __name__ == '__main__':
     print(sys.getsizeof(model))
     # model = None
 
-    modi_model = MODI_model()
-    model = modi_model.fit(X_train, y_train, model)
+    modi_model = MODI_model(model)
+    model = modi_model.fit(X_train, y_train)
     loss_and_metrics = model.evaluate(X_test, y_test)
     print(loss_and_metrics)
     
