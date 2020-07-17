@@ -11,6 +11,10 @@ service Data_Model_Handler{
     
 }
 
+// service Stdout_Handler{
+//     rpc GetLearningData ()
+// }
+
 message ObjectsSend{
     bytes train_array = 1;
     bytes label_array = 2;
