@@ -64,7 +64,7 @@ def gen_data():
             temp_label[label_idx] = 1
             y_.append(temp_label)
             
-            if test_cnt == 1000: break
+            if test_cnt == 100: break
             
     X_ = np.array(X_).astype(np.float16)
     y_ = np.array(y_).astype(np.float16)
