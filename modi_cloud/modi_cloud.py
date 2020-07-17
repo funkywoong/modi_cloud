@@ -26,6 +26,7 @@ class MODI_model():
         self.__X_train = None
         self.__y_train = None
         self.__model = None
+        self.__is_transfer_ok = False
         self.__trained_model = None
 
     def fit(self, train_data, label_data, model):
@@ -43,7 +44,7 @@ class MODI_model():
             req_train_th.daemon = True
             req_train_th.start()
 
-            req_std_th = th.Thread(target=self.__req_stdout)
+            req_std_th = th.Thread(target=self.__req_trns_complete)
             req_std_th.daemon = True
             req_std_th.start()
 
@@ -62,10 +63,12 @@ class MODI_model():
 
         self.__trained_model = codec.load_data(response_train.trained_model)
 
-    def __req_stdout(self):
+    def __req_trns_complete(self):
         response_transfer = self.__client_stub.TransferComplete(
             pb2.TransferCompleteSend(ask_transfer=1)
         )
+
+        if response_transfer: self.__is_transfer_ok = True
         print(response_transfer.reply_transfer)
 
 if __name__ == '__main__':
