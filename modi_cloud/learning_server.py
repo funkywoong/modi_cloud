@@ -1,5 +1,5 @@
 import time
-import logging, os
+import logging, os, sys
 import grpc
 import h5py
 import numpy as np
@@ -7,7 +7,7 @@ import threading as th
 
 from joblib import load, dump
 from concurrent import futures
-from io import BytesIO
+from io import BytesIO, StringIO
 from util.mlcodec import MLCodec as codec
 
 import util.modi_ai_cloud_pb2 as pb2
@@ -19,14 +19,15 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
     def __init__(self):
         super().__init__()
-        
         self.__trns_flag = False
+        self.__train_flag = False
+        self.__old_stdout = None
+        self.__new_stdout = None
 
     def __watchdog(self):
         pass
         
     def SendObjects(self, request, context):
-
         print('in SendObjects')
         train_data = codec.load_data(request.train_array)
         label_data = codec.load_data(request.label_array)
@@ -44,9 +45,8 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         return pb2.ModelReply(trained_model=trained_model)
 
     def TransferComplete(self, request, context):
-        
         start_time = time.monotonic()
-        while 1:
+        while True:
             if request.ask_transfer and self.__trns_flag:
                 return pb2.TransferCompleteReply(reply_transfer=1)
             if time.monotonic() - start_time == 300:
@@ -55,9 +55,22 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         
         return pb2.TransferCompleteReply(reply_transfer=-1)
 
-    def __training(self, X_train, y_train, model):
-        hist = model.fit(X_train, y_train, epochs=50, batch_size=32)
+    def MonitorLearning(self, request, context):
+        while self.__train_flag:
+            yield pb2.StdoutReply(reply_stdout=self.__new_stdout.getvalue())
 
+    def __training(self, X_train, y_train, model):
+        self.__old_stdout = sys.stdout
+        self.__new_stdout = StringIO()
+        sys.stdout = self.__new_stdout
+
+        self.__train_flag = True
+        hist = model.fit(X_train, y_train, epochs=50, batch_size=32)
+        output = self.__new_stdout.getvalue()
+
+        sys.stdout = self.__old_stdout
+        print(output)
+        self.__train_flag = False
         return hist, model
 
     def __is_transfer_ok(self, train_data, label_data, model):

@@ -34,6 +34,11 @@ class Data_Model_HandlerStub(object):
                 request_serializer=modi__ai__cloud__pb2.LearningCompleteSend.SerializeToString,
                 response_deserializer=modi__ai__cloud__pb2.LearningCompleteReply.FromString,
                 )
+        self.MonitorLearning = channel.unary_stream(
+                '/modi_cloud.Data_Model_Handler/MonitorLearning',
+                request_serializer=modi__ai__cloud__pb2.StdoutSend.SerializeToString,
+                response_deserializer=modi__ai__cloud__pb2.StdoutReply.FromString,
+                )
 
 
 class Data_Model_HandlerServicer(object):
@@ -63,6 +68,12 @@ class Data_Model_HandlerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def MonitorLearning(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Data_Model_HandlerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -85,6 +96,11 @@ def add_Data_Model_HandlerServicer_to_server(servicer, server):
                     servicer.LearningComplete,
                     request_deserializer=modi__ai__cloud__pb2.LearningCompleteSend.FromString,
                     response_serializer=modi__ai__cloud__pb2.LearningCompleteReply.SerializeToString,
+            ),
+            'MonitorLearning': grpc.unary_stream_rpc_method_handler(
+                    servicer.MonitorLearning,
+                    request_deserializer=modi__ai__cloud__pb2.StdoutSend.FromString,
+                    response_serializer=modi__ai__cloud__pb2.StdoutReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -157,5 +173,21 @@ class Data_Model_Handler(object):
         return grpc.experimental.unary_unary(request, target, '/modi_cloud.Data_Model_Handler/LearningComplete',
             modi__ai__cloud__pb2.LearningCompleteSend.SerializeToString,
             modi__ai__cloud__pb2.LearningCompleteReply.FromString,
+            options, channel_credentials,
+            call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def MonitorLearning(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/modi_cloud.Data_Model_Handler/MonitorLearning',
+            modi__ai__cloud__pb2.StdoutSend.SerializeToString,
+            modi__ai__cloud__pb2.StdoutReply.FromString,
             options, channel_credentials,
             call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"F\n\x0bObjectsSend\x12\x13\n\x0btrain_array\x18\x01 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\x0c\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\xcb\x02\n\x12\x44\x61ta_Model_Handler\x12>\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12\x43\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReplyb\x06proto3'
+  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"F\n\x0bObjectsSend\x12\x13\n\x0btrain_array\x18\x01 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\x0c\" \n\nStdoutSend\x12\x12\n\nask_stdout\x18\x01 \x01(\x05\"#\n\x0bStdoutReply\x12\x14\n\x0creply_stdout\x18\x01 \x01(\t\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\x91\x03\n\x12\x44\x61ta_Model_Handler\x12>\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12\x43\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReply\x12\x44\n\x0fMonitorLearning\x12\x16.modi_cloud.StdoutSend\x1a\x17.modi_cloud.StdoutReply0\x01\x62\x06proto3'
 )
 
 
@@ -71,6 +71,70 @@ _OBJECTSSEND = _descriptor.Descriptor(
 )
 
 
+_STDOUTSEND = _descriptor.Descriptor(
+  name='StdoutSend',
+  full_name='modi_cloud.StdoutSend',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='ask_stdout', full_name='modi_cloud.StdoutSend.ask_stdout', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=107,
+  serialized_end=139,
+)
+
+
+_STDOUTREPLY = _descriptor.Descriptor(
+  name='StdoutReply',
+  full_name='modi_cloud.StdoutReply',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='reply_stdout', full_name='modi_cloud.StdoutReply.reply_stdout', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=141,
+  serialized_end=176,
+)
+
+
 _TRANSFERCOMPLETESEND = _descriptor.Descriptor(
   name='TransferCompleteSend',
   full_name='modi_cloud.TransferCompleteSend',
@@ -98,8 +162,8 @@ _TRANSFERCOMPLETESEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=107,
-  serialized_end=151,
+  serialized_start=178,
+  serialized_end=222,
 )
 
 
@@ -130,8 +194,8 @@ _LEARNINGCOMPLETESEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=153,
-  serialized_end=197,
+  serialized_start=224,
+  serialized_end=268,
 )
 
 
@@ -162,8 +226,8 @@ _TRANSFERCOMPLETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=199,
-  serialized_end=246,
+  serialized_start=270,
+  serialized_end=317,
 )
 
 
@@ -194,8 +258,8 @@ _LEARNINGCOMPLETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=248,
-  serialized_end=295,
+  serialized_start=319,
+  serialized_end=366,
 )
 
 
@@ -226,11 +290,13 @@ _MODELREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=297,
-  serialized_end=332,
+  serialized_start=368,
+  serialized_end=403,
 )
 
 DESCRIPTOR.message_types_by_name['ObjectsSend'] = _OBJECTSSEND
+DESCRIPTOR.message_types_by_name['StdoutSend'] = _STDOUTSEND
+DESCRIPTOR.message_types_by_name['StdoutReply'] = _STDOUTREPLY
 DESCRIPTOR.message_types_by_name['TransferCompleteSend'] = _TRANSFERCOMPLETESEND
 DESCRIPTOR.message_types_by_name['LearningCompleteSend'] = _LEARNINGCOMPLETESEND
 DESCRIPTOR.message_types_by_name['TransferCompleteReply'] = _TRANSFERCOMPLETEREPLY
@@ -244,6 +310,20 @@ ObjectsSend = _reflection.GeneratedProtocolMessageType('ObjectsSend', (_message.
   # @@protoc_insertion_point(class_scope:modi_cloud.ObjectsSend)
   })
 _sym_db.RegisterMessage(ObjectsSend)
+
+StdoutSend = _reflection.GeneratedProtocolMessageType('StdoutSend', (_message.Message,), {
+  'DESCRIPTOR' : _STDOUTSEND,
+  '__module__' : 'modi_ai_cloud_pb2'
+  # @@protoc_insertion_point(class_scope:modi_cloud.StdoutSend)
+  })
+_sym_db.RegisterMessage(StdoutSend)
+
+StdoutReply = _reflection.GeneratedProtocolMessageType('StdoutReply', (_message.Message,), {
+  'DESCRIPTOR' : _STDOUTREPLY,
+  '__module__' : 'modi_ai_cloud_pb2'
+  # @@protoc_insertion_point(class_scope:modi_cloud.StdoutReply)
+  })
+_sym_db.RegisterMessage(StdoutReply)
 
 TransferCompleteSend = _reflection.GeneratedProtocolMessageType('TransferCompleteSend', (_message.Message,), {
   'DESCRIPTOR' : _TRANSFERCOMPLETESEND,
@@ -289,8 +369,8 @@ _DATA_MODEL_HANDLER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=335,
-  serialized_end=666,
+  serialized_start=406,
+  serialized_end=807,
   methods=[
   _descriptor.MethodDescriptor(
     name='SendObjects',
@@ -329,6 +409,16 @@ _DATA_MODEL_HANDLER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_LEARNINGCOMPLETESEND,
     output_type=_LEARNINGCOMPLETEREPLY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='MonitorLearning',
+    full_name='modi_cloud.Data_Model_Handler.MonitorLearning',
+    index=4,
+    containing_service=None,
+    input_type=_STDOUTSEND,
+    output_type=_STDOUTREPLY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

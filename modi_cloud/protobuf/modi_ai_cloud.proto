@@ -9,7 +9,7 @@ service Data_Model_Handler{
     rpc TransferComplete (TransferCompleteSend) returns (TransferCompleteReply);
     rpc LearningComplete (LearningCompleteSend) returns (LearningCompleteReply);
     
-    rpc MonitorLearning (stream StdoutSend) returns (stream StdoutReply);
+    rpc MonitorLearning (StdoutSend) returns (stream StdoutReply);
 }
 
 // service Stdout_Handler{
@@ -31,11 +31,11 @@ message ObjectsSend{
     */
 }
 message StdoutSend{
-    repeated int32 ask_stdout = 1;
+    int32 ask_stdout = 1;
 }
 
 message StdoutReply{
-    repeated string reply_stdout = 1;
+    string reply_stdout = 1;
 }
 
 message TransferCompleteSend{
