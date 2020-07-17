@@ -17,6 +17,11 @@ MESSAGE_SIZE = 1024 * 1024 * 200
 
 class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
+    def __init__(self):
+        super().__init__()
+        
+        self.__trns_flag = False
+
     def __watchdog(self):
         pass
         
@@ -29,6 +34,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
         if not self.__is_transfer_ok(train_data, label_data, model):
             return pb2.ModelReply(trained_model=None)
+        self.__trns_flag = True
 
         hist, trained_model = self.__training(train_data, label_data, model)
         print(type(hist))
@@ -39,8 +45,13 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
     def TransferComplete(self, request, context):
         
-        if request.ask_transfer:
-            return pb2.TransferCompleteReply(reply_transfer=1)
+        start_time = time.monotonic()
+        while 1:
+            if request.ask_transfer and self.__trns_flag:
+                return pb2.TransferCompleteReply(reply_transfer=1)
+            if time.monotonic() - start_time == 300:
+                break
+            time.sleep(0.05)
         
         return pb2.TransferCompleteReply(reply_transfer=-1)
 
