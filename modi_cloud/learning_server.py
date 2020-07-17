@@ -38,8 +38,8 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         self.__trns_flag = True
 
         hist, trained_model = self.__training(train_data, label_data, model)
-        print(type(hist))
-        print(type(trained_model))
+        # print(type(hist))
+        # print(type(trained_model))
         trained_model = codec.parse_data(trained_model)
         
         return pb2.ModelReply(trained_model=trained_model)
@@ -56,8 +56,25 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         return pb2.TransferCompleteReply(reply_transfer=-1)
 
     def MonitorLearning(self, request, context):
+        def stream():
+            while self.__train_flag:
+                time.sleep(0.001)
+                yield self.__new_stdout.getvalue()
+        
+        output_stream = stream()
+
+        old_reply = str()
         while self.__train_flag:
-            yield pb2.StdoutReply(reply_stdout=self.__new_stdout.getvalue())
+            time.sleep(0.001)
+            try:
+                new_reply = next(output_stream)
+                if old_reply != new_reply:
+                    old_reply = new_reply
+                    yield pb2.StdoutReply(reply_stdout=old_reply)
+            except:
+                pass
+        print('out')
+        return pb2.StdoutReply(reply_stdout='End')
 
     def __training(self, X_train, y_train, model):
         self.__old_stdout = sys.stdout
