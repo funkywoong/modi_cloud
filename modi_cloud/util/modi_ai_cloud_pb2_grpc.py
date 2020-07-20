@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import util.modi_ai_cloud_pb2 as modi__ai__cloud__pb2
+import modi_cloud.util.modi_ai_cloud_pb2 as modi__ai__cloud__pb2
 
 
 class Data_Model_HandlerStub(object):
