@@ -108,14 +108,8 @@ def gen_model():
     print(model.output_shape)
 
     model.add(Flatten())
-    # model.add(Dense(256, activation = 'relu'))
     model.add(Dropout(0.25))
     model.add(Dense(3, activation = 'softmax'))
-
-    # model.add(Flatten())
-    # model.add(Dense(256, activation = 'relu'))
-    # model.add(Dropout(0.25))
-    # model.add(Dense(6, activation = 'relu'))
 
     opt = keras.optimizers.Adam(learning_rate = 0.001)
     model.compile(loss = 'categorical_crossentropy', optimizer = opt, metrics = ['accuracy',])

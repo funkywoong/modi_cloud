@@ -81,22 +81,17 @@ class MODI_model():
             pb2.StdoutSend(ask_stdout=1)
         )
 
-        def __read_incoming():
-            while 1:
-                try:
-                    item = next(input_stream).reply_stdout
-                    sys.stdout.write(CURSOR_UP_ONE)
-                    sys.stdout.write(ERASE_LINE)
-                    print(item)
-                    if item == 'End':
-                        break
-                    time.sleep(0.05)
-                except:
+        while 1:
+            try:
+                item = next(input_stream).reply_stdout
+                sys.stdout.write(CURSOR_UP_ONE)
+                sys.stdout.write(ERASE_LINE)
+                print(item)
+                if item == 'End':
                     break
-
-        read_th = th.Thread(target=__read_incoming, daemon=True)
-        read_th.start()
-        read_th.join()
+                time.sleep(0.05)
+            except:
+                break
             
 if __name__ == '__main__':
     X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
