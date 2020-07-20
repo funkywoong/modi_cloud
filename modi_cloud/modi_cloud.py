@@ -9,13 +9,13 @@ import threading as th
 
 from io import BytesIO 
 from joblib import load, dump
-from util.mlcodec import MLCodec as codec
+from modi_cloud.util.mlcodec import MLCodec as codec
 
-import util.modi_ai_cloud_pb2 as pb2
-import util.modi_ai_cloud_pb2_grpc as pb2_grpc
+import modi_cloud.util.modi_ai_cloud_pb2 as pb2
+import modi_cloud.util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
 #example code
-from example.test.test import gen_data, gen_model
+from modi_cloud.example.test.test import gen_data, gen_model
 
 class MODI_model():
 
