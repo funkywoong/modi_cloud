@@ -129,4 +129,7 @@ dmypy.json
 .pyre/
 
 # test file
-*_test.py
+*test*.py
+
+# Mac
+*.DS_Store

@@ -7,15 +7,16 @@ import numpy as np
 import numpy as np
 import threading as th
 
+# from IPython.display import clear_output
 from io import BytesIO 
 from joblib import load, dump
-from util.mlcodec import MLCodec as codec
+from modi_cloud.util.mlcodec import MLCodec as codec
 
-import util.modi_ai_cloud_pb2 as pb2
-import util.modi_ai_cloud_pb2_grpc as pb2_grpc
+import modi_cloud.util.modi_ai_cloud_pb2 as pb2
+import modi_cloud.util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
 #example code
-from example.test.test import gen_data, gen_model
+from modi_cloud.example.test.test import gen_data, gen_model
 
 class MODI_model():
 
@@ -73,30 +74,20 @@ class MODI_model():
 
     def __req_gpu_stdout(self):
 
-        CURSOR_UP_ONE = '\x1b[1A'
-        ERASE_LINE = '\x1b[2K'        
-        
         self.__trns_flag.wait()
         input_stream = self.__client_stub.MonitorLearning(
             pb2.StdoutSend(ask_stdout=1)
         )
 
-        def __read_incoming():
-            while 1:
-                try:
-                    item = next(input_stream).reply_stdout
-                    sys.stdout.write(CURSOR_UP_ONE)
-                    sys.stdout.write(ERASE_LINE)
-                    print(item)
-                    if item == 'End':
-                        break
-                    time.sleep(0.05)
-                except:
+        while 1:
+            try:
+                item = next(input_stream).reply_stdout
+                print(item)
+                if item == 'End':
                     break
-
-        read_th = th.Thread(target=__read_incoming, daemon=True)
-        read_th.start()
-        read_th.join()
+                time.sleep(0.05)
+            except:
+                break
             
 if __name__ == '__main__':
     X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
