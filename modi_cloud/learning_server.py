@@ -8,10 +8,10 @@ import threading as th
 from joblib import load, dump
 from concurrent import futures
 from io import BytesIO, StringIO
-from util.mlcodec import MLCodec as codec
+from modi_cloud.util.mlcodec import MLCodec as codec
 
-import util.modi_ai_cloud_pb2 as pb2
-import util.modi_ai_cloud_pb2_grpc as pb2_grpc
+import modi_cloud.util.modi_ai_cloud_pb2 as pb2
+import modi_cloud.util.modi_ai_cloud_pb2_grpc as pb2_grpc
 
 MESSAGE_SIZE = 1024 * 1024 * 200
 
@@ -38,10 +38,6 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         self.__trns_flag = True
 
         hist, trained_model = self.__training(train_data, label_data, model)
-        print(train_data.shape)
-        print(label_data.shape)
-        loss_and_metrics = trained_model.evaluate(train_data, label_data)
-        print(loss_and_metrics)
         trained_model = codec.parse_data(trained_model)
         
         return pb2.ModelReply(trained_model=trained_model)
@@ -73,14 +69,18 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
                 try:
                     new_reply = next(output_stream)
                     if old_reply != new_reply:
+                        target_index = len(old_reply)
                         old_reply = new_reply
-                        yield pb2.StdoutReply(reply_stdout=old_reply)
+                        target_str = old_reply[target_index:]
+                        yield pb2.StdoutReply(reply_stdout=target_str)
                 except:
+                    print('except')
                     break
             else:
                 pass
+        print('before close')
         output_stream.close()
-
+        print('out')
         return pb2.StdoutReply(reply_stdout='End')
 
     def __training(self, X_train, y_train, model):
