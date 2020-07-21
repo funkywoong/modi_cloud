@@ -7,6 +7,7 @@ import numpy as np
 import numpy as np
 import threading as th
 
+# from IPython.display import clear_output
 from io import BytesIO 
 from joblib import load, dump
 from modi_cloud.util.mlcodec import MLCodec as codec
@@ -73,9 +74,6 @@ class MODI_model():
 
     def __req_gpu_stdout(self):
 
-        CURSOR_UP_ONE = '\x1b[1A'
-        ERASE_LINE = '\x1b[2K'        
-        
         self.__trns_flag.wait()
         input_stream = self.__client_stub.MonitorLearning(
             pb2.StdoutSend(ask_stdout=1)
@@ -84,8 +82,6 @@ class MODI_model():
         while 1:
             try:
                 item = next(input_stream).reply_stdout
-                sys.stdout.write(CURSOR_UP_ONE)
-                sys.stdout.write(ERASE_LINE)
                 print(item)
                 if item == 'End':
                     break

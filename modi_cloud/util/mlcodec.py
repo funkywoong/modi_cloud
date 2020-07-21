@@ -17,14 +17,10 @@ class MLCodec():
         if isinstance(target, np.ndarray):
             np.save(buf, target, allow_pickle=True)
         elif 'keras' in str(type(target)):
-            # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-            # from tensorflow.keras.models import save_model
-            # with h5py.File(buf, 'w') as f:
-            #     save_model(target, f, include_optimizer=True)
             os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-            from tensorflow.keras.models import model_from_config
-            c = target.get_config()
-            print(c)
+            from tensorflow.keras.models import save_model
+            with h5py.File(buf, 'w') as f:
+                save_model(target, f, include_optimizer=True)
         elif 'sklearn' in str(type(target)):
             dump(target, buf)
         buf.seek(0)
