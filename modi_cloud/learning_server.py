@@ -19,8 +19,12 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
     def __init__(self):
         super().__init__()
-        self.__trns_flag = False
-        self.__train_flag = False
+
+        self.__trns_flag = th.Event()
+        self.__trns_com_flag = False
+        self.__train_flag = th.Event()
+        self.__train_com_flag = False
+
         self.__old_stdout = None
         self.__new_stdout = None
 
@@ -34,8 +38,10 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         model = codec.load_data(request.model)
 
         if not self.__is_transfer_ok(train_data, label_data, model):
+            self.__trns_flag.set()
             return pb2.ModelReply(trained_model=None)
-        self.__trns_flag = True
+        self.__trns_com_flag = True
+        self.__trns_flag.set()
 
         hist, trained_model = self.__training(train_data, label_data, model)
         trained_model = codec.parse_data(trained_model)
@@ -43,20 +49,20 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         return pb2.ModelReply(trained_model=trained_model)
 
     def TransferComplete(self, request, context):
-        start_time = time.monotonic()
-        while True:
-            if request.ask_transfer and self.__trns_flag:
-                return pb2.TransferCompleteReply(reply_transfer=1)
-            if time.monotonic() - start_time == 300:
-                break
-            time.sleep(0.05)
-        self.__trns_flag = False
-
-        return pb2.TransferCompleteReply(reply_transfer=-1)
+        self.__trns_flag.wait(timeout=300)
+        if (
+            request.ask_transfer and 
+            self.__trns_flag.is_set() and
+            self.__trns_com_flag
+        ):
+            return pb2.TransferCompleteReply(reply_transfer=1)
+        else:
+            return pb2.TransferCompleteReply(reply_transfer=-1)
 
     def MonitorLearning(self, request, context):
+        self.__train_flag.wait(timeout=300)
         def stream():
-            while self.__train_flag:
+            while self.__train_flag.is_set():
                 time.sleep(0.001)
                 yield self.__new_stdout.getvalue()
         
@@ -64,7 +70,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
 
         old_reply = str()
         while True:
-            if request.ask_stdout and self.__train_flag:
+            if request.ask_stdout and self.__train_flag.is_set():
                 time.sleep(0.001)
                 try:
                     new_reply = next(output_stream)
@@ -74,27 +80,28 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
                         target_str = old_reply[target_index:]
                         yield pb2.StdoutReply(reply_stdout=target_str)
                 except:
-                    print('except')
+                    print('Generator raised StopIteration except')
                     break
+                finally:
+                    if self.__train_com_flag:
+                        break
             else:
                 pass
-        print('before close')
         output_stream.close()
         print('out')
         return pb2.StdoutReply(reply_stdout='End')
 
     def __training(self, X_train, y_train, model):
-        test_time = time.monotonic()
         self.__old_stdout = sys.stdout
         self.__new_stdout = StringIO()
         sys.stdout = self.__new_stdout
 
-        self.__train_flag = True
+        self.__train_flag.set()
         hist = model.fit(X_train, y_train, epochs=5, batch_size=1)
         output = self.__new_stdout.getvalue()
-
         sys.stdout = self.__old_stdout
-        self.__train_flag = False
+
+        self.__train_com_flag = True
         print(output)
         return hist, model
 
@@ -115,7 +122,3 @@ def serve():
     server.start()
     print('server start')
     server.wait_for_termination()
-
-if __name__ == '__main__':
-    logging.basicConfig()
-    serve()
