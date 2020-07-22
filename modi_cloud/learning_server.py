@@ -36,14 +36,18 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         model = codec.load_data(request.model)
         train_data = codec.load_data(request.train_array)
         label_data = codec.load_data(request.label_array)
+        model_type = request.model_type
+        user_param = codec.load_data(request.user_param)
 
-        if not self.__is_transfer_ok(train_data, label_data, model):
+        if not self.__is_transfer_ok(model, train_data, label_data, model_type, user_param):
             self.__trns_flag.set()
             return pb2.ModelReply(trained_model=None)
         self.__trns_com_flag = True
         self.__trns_flag.set()
 
-        hist, trained_model = self.__training(train_data, label_data, model)
+        hist, trained_model = self.__training(
+            model, train_data, label_data, model_type, user_param
+        )
         trained_model = codec.parse_data(trained_model)
         
         return pb2.ModelReply(trained_model=trained_model)
@@ -91,25 +95,45 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         print('out')
         return pb2.StdoutReply(reply_stdout='End')
 
-    def __training(self, X_train, y_train, model):
+    def __training(self, model, train_data, label_data, model_type, user_param):
         self.__old_stdout = sys.stdout
         self.__new_stdout = StringIO()
         sys.stdout = self.__new_stdout
 
         self.__train_flag.set()
-        hist = model.fit(X_train, y_train, epochs=5, batch_size=1)
+        if model_type == 'keras':
+            batch_size, epochs, verbose, callbacks, validation_split, validation_data, \
+            shuffle, class_weight, sample_weight, initial_epoch, steps_per_epoch, \
+            validation_steps, validation_batch_size, validation_freq, max_queue_size, \
+            workers, use_multiprocessing = self.__gen_param(user_param)
+
+            hist = model.fit(
+                x=train_data, y=label_data, batch_size=batch_size, epochs=epochs, verbose=verbose,
+                callbacks=callbacks, validation_split=validation_split, validation_data=validation_data,
+                shuffle=shuffle, class_weight=class_weight, sample_weight=sample_weight, 
+                initial_epoch=initial_epoch, steps_per_epoch=steps_per_epoch, validation_steps=validation_steps,
+                validation_batch_size=validation_batch_size, validation_freq=validation_freq,
+                max_queue_size=max_queue_size, workers=workers, use_multiprocessing=use_multiprocessing
+            )
+        elif model_type == 'sklearn':
+            sample_weight = self.__gen_param(user_param)
+            model.fit(X=train_data, y=label_data, sample_weight=sample_weight)
+
         output = self.__new_stdout.getvalue()
         sys.stdout = self.__old_stdout
-
         self.__train_com_flag = True
         print(output)
-        return hist, model
+        
+        return model
 
-    def __is_transfer_ok(self, train_data, label_data, model):
+    def __gen_param(self, user_param):
+        return [each_param for _, each_param in user_param.items()]
+
+    def __is_transfer_ok(self, model, train_data, label_data, model_type, user_param):
         return(
-            train_data is not None and
-            label_data is not None and
-            model is not None
+            model is not None and train_data is not None and
+            label_data is not None and model_type is not None and
+            user_param is not None
         )
 
 def serve():

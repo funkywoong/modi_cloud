@@ -64,7 +64,7 @@ class MODI_model():
 
     def __search_sklearn_param(self):
         sklearn_param = {
-            'sample_weight' = None
+            'sample_weight' : None
         }
         
         for key, new_value in user_param.items():
