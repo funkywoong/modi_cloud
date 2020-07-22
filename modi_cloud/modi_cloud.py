@@ -70,10 +70,12 @@ class MODI_model():
         )
 
         if response_transfer: self.__trns_flag.set()
-        print(response_transfer.reply_transfer)
+        elif response_transfer == -1:
+            print('Connection failed. Please try again.')
+            sys.exit(0)
 
     def __req_gpu_stdout(self):
-
+        
         self.__trns_flag.wait()
         input_stream = self.__client_stub.MonitorLearning(
             pb2.StdoutSend(ask_stdout=1)
@@ -82,24 +84,24 @@ class MODI_model():
         while 1:
             try:
                 item = next(input_stream).reply_stdout
-                print(item)
+                print(item, end='')
                 if item == 'End':
                     break
                 time.sleep(0.05)
             except:
                 break
             
-if __name__ == '__main__':
-    X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
-    model = gen_model()
-    print(sys.getsizeof(X_train))
-    print(sys.getsizeof(y_train))
-    print(sys.getsizeof(model))
-    # model = None
+# if __name__ == '__main__':
+#     X_train, X_valid, X_test, y_train, y_valid, y_test = gen_data()
+#     model = gen_model()
+#     print(sys.getsizeof(X_train))
+#     print(sys.getsizeof(y_train))
+#     print(sys.getsizeof(model))
+#     # model = None
 
-    modi_model = MODI_model(model)
-    model = modi_model.fit(X_train, y_train)
-    loss_and_metrics = model.evaluate(X_test, y_test)
-    print(loss_and_metrics)
+#     modi_model = MODI_model(model)
+#     model = modi_model.fit(X_train, y_train)
+#     loss_and_metrics = model.evaluate(X_test, y_test)
+#     print(loss_and_metrics)
     
  
