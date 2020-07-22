@@ -37,7 +37,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         train_data = codec.load_data(request.train_array)
         label_data = codec.load_data(request.label_array)
         model_type = request.model_type
-        user_param = codec.load_data(request.user_param)
+        user_param = codec.load_data(request.param)
 
         if not self.__is_transfer_ok(model, train_data, label_data, model_type, user_param):
             self.__trns_flag.set()
@@ -45,7 +45,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         self.__trns_com_flag = True
         self.__trns_flag.set()
 
-        hist, trained_model = self.__training(
+        trained_model = self.__training(
             model, train_data, label_data, model_type, user_param
         )
         trained_model = codec.parse_data(trained_model)
@@ -123,7 +123,7 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         sys.stdout = self.__old_stdout
         self.__train_com_flag = True
         print(output)
-        
+
         return model
 
     def __gen_param(self, user_param):

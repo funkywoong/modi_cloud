@@ -31,7 +31,8 @@ setup(
     install_requires=get_requirements(),
     include_package_data=True,
     keywords=["python", "modi", "cloud"],
-    packages=find_packages(include=['modi_cloud', 'modi_cloud.util']),
+    packages=find_packages(include=['modi_cloud', 'modi_cloud.util', 'modi_cloud.example',
+                                    'modi_cloud.example.test']),
     test_suite="tests",
     url='https://github.com/funkywoong/modi_cloud',
     classifiers=[
