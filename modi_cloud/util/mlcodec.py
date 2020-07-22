@@ -10,6 +10,13 @@ from socket import getdefaulttimeout
 class MLCodec():
 
     @staticmethod
+    def model_type(target):
+        if 'keras' in str(type(target)):
+            return 'keras'
+        elif 'sklearn' in str(type(target)):
+            return 'sklearn'
+
+    @staticmethod
     def parse_data(target):
         if isinstance(target, bytes):
             return target

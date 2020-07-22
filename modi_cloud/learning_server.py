@@ -33,9 +33,9 @@ class Data_model_handler(pb2_grpc.Data_Model_HandlerServicer):
         
     def SendObjects(self, request, context):
         print('in SendObjects')
+        model = codec.load_data(request.model)
         train_data = codec.load_data(request.train_array)
         label_data = codec.load_data(request.label_array)
-        model = codec.load_data(request.model)
 
         if not self.__is_transfer_ok(train_data, label_data, model):
             self.__trns_flag.set()

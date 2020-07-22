@@ -22,19 +22,68 @@ class MODI_model():
 
     def __init__(self, model):
         self.HOST_URL = 'ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000'
-        self.__client_stub = None
-        self.__X_train = None
-        self.__y_train = None
         self.__model = model
+        self.__X_train = None
+        self.__Y_train = None
+        
+        self.__model_type = codec.model_type(model)
+        self.__client_stub = None
+        self.__fit_param = dict()
+
         self.__trns_flag = th.Event()
         self.__trained_model = None
 
-    def fit(self, train_data, label_data):
+    def fit(self, train_data, label_data, **kwargs):
+        self.__model = codec.parse_data(self.__model)
         self.__X_train = codec.parse_data(train_data)
         self.__y_train = codec.parse_data(label_data)
-        self.__model = codec.parse_data(self.__model)
 
+        try:
+            self.__fit_param = self.__search_param(kwargs)
+        except KeyError:
+            print('학습 파라미터를 잘못 입력하였습니다. 다시 시도해주세요.')
+
+        # TODO : keras / sklearn 마다 communication proto 재 정의
+        if self.__model_type == 'keras':
+            return self.__keras_fit()
+        elif self.__model_type == 'sklearn':
+            return self.__sklearn_fit()
+
+    def __keras_fit(self):
+        
         return self.__com_server()
+
+    def __sklearn_fit(self):
+        
+        return self.__com_server()
+
+    def __search_param(self, model_type, user_param):
+        if model_type == 'keras':
+            self.__search_keras_param(user_param)
+        elif model_type == 'sklearn':
+            self.__search_sklearn_param(user_param)
+
+    def __search_keras_param(self, user_param):
+        keras_param = {
+            'batch_size' : None, 'epochs' : 1, 'verbose' : 1, 'callbacks' : None,
+            'validation_split' : 0.0, 'validation_data' : None, 'shuffle' : True, 'class_weight' : None,
+            'sample_weight' : None, 'initial_epoch' : 0, 'steps_per_epoch' : None,
+            'validation_steps' : None, 'validation_batch_size' : None, 'validation_freq' : 1,
+            'max_queue_size' : 10, 'workers' : 1, 'use_multiprocessing' : False
+        }
+
+        for key, new_value in user_param.items():
+            keras_param[key] = new_value
+        return keras_param
+
+    def __search_sklearn_param(self):
+        sklearn_param = {
+            'sample_weight' = None
+        }
+        
+        for key, new_value in user_param.items():
+            sklearn_param[key] = new_value
+        return sklearn_param
 
     def __com_server(self):
         with grpc.insecure_channel(self.HOST_URL) as channel:
@@ -71,7 +120,7 @@ class MODI_model():
 
         if response_transfer: self.__trns_flag.set()
         elif response_transfer == -1:
-            print('Connection failed. Please try again.')
+            print('GPU 서버와의 연결이 성공하지 못햇습니다. 다시 시도해주세요.')
             sys.exit(0)
 
     def __req_gpu_stdout(self):
