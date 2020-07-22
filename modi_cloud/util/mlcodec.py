@@ -2,6 +2,7 @@ import os
 import socket
 import numpy as np
 import h5py
+import json
 
 from joblib import load, dump
 from io import BytesIO
@@ -20,6 +21,8 @@ class MLCodec():
     def parse_data(target):
         if isinstance(target, bytes):
             return target
+        if isinstance(target, dict):
+            return '{}{}'.format('DICT', json.dumps(target)).encode('utf-8')
         buf = BytesIO()
         if isinstance(target, np.ndarray):
             np.save(buf, target, allow_pickle=True)
@@ -35,7 +38,7 @@ class MLCodec():
         return buf.read()
 
     @staticmethod
-    def load_data(target: BytesIO):
+    def load_data(target):
         buf = BytesIO()
         buf.write(target)
         buf.seek(0)
@@ -51,5 +54,7 @@ class MLCodec():
             with h5py.File(buf, 'r') as f:
                 given_model = load_model(f)
             return given_model
+        elif b'DICT' in data_type:
+            return json.loads(buf.read()[4:].decode('utf-8'))
         else:
             return None

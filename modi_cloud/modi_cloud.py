@@ -23,45 +23,31 @@ class MODI_model():
     def __init__(self, model):
         self.HOST_URL = 'ec2-15-164-216-238.ap-northeast-2.compute.amazonaws.com:8000'
         self.__model = model
-        self.__X_train = None
-        self.__Y_train = None
-        
         self.__model_type = codec.model_type(model)
         self.__client_stub = None
-        self.__fit_param = dict()
 
         self.__trns_flag = th.Event()
         self.__trained_model = None
 
     def fit(self, train_data, label_data, **kwargs):
-        self.__model = codec.parse_data(self.__model)
-        self.__X_train = codec.parse_data(train_data)
-        self.__y_train = codec.parse_data(label_data)
+        ser_model = codec.parse_data(self.__model)
+        ser_X_train = codec.parse_data(train_data)
+        ser_y_train = codec.parse_data(label_data)
+
+        model_type = self.__model_type
 
         try:
-            self.__fit_param = self.__search_param(kwargs)
+            ser_fit_param = codec.parse_data(self.__search_param(kwargs))
         except KeyError:
             print('학습 파라미터를 잘못 입력하였습니다. 다시 시도해주세요.')
 
-        # TODO : keras / sklearn 마다 communication proto 재 정의
+        return self.__com_server(ser_model, ser_X_train, ser_y_train, model_type, ser_fit_param)
+
+    def __search_param(self, user_param):
         if self.__model_type == 'keras':
-            return self.__keras_fit()
+            return self.__search_keras_param(user_param)
         elif self.__model_type == 'sklearn':
-            return self.__sklearn_fit()
-
-    def __keras_fit(self):
-        
-        return self.__com_server()
-
-    def __sklearn_fit(self):
-        
-        return self.__com_server()
-
-    def __search_param(self, model_type, user_param):
-        if model_type == 'keras':
-            self.__search_keras_param(user_param)
-        elif model_type == 'sklearn':
-            self.__search_sklearn_param(user_param)
+            return self.__search_sklearn_param(user_param)
 
     def __search_keras_param(self, user_param):
         keras_param = {
@@ -85,11 +71,13 @@ class MODI_model():
             sklearn_param[key] = new_value
         return sklearn_param
 
-    def __com_server(self):
+    def __com_server(self, model, train_data, label_data, model_type, user_param):
         with grpc.insecure_channel(self.HOST_URL) as channel:
             self.__client_stub = pb2_grpc.Data_Model_HandlerStub(channel)
 
-            req_train_th = th.Thread(target=self.__req_training, daemon=True)
+            req_train_th = th.Thread(target=self.__req_training, daemon=True,
+                args=(model, train_data, label_data, model_type, user_param)
+            )
             req_train_th.start()
 
             req_trns_th = th.Thread(target=self.__req_trns_complete, daemon=True)
@@ -104,10 +92,11 @@ class MODI_model():
         
         return self.__trained_model
 
-    def __req_training(self):
+    def __req_training(self, model, train_data, label_data, model_type, user_param):
         response_train = self.__client_stub.SendObjects(
             pb2.ObjectsSend(
-                train_array=self.__X_train, label_array=self.__y_train, model=self.__model
+                model=model, train_array=train_data, label_array=label_data, 
+                model_type=model_type, param=user_param
             )
         )
 
@@ -130,7 +119,7 @@ class MODI_model():
             pb2.StdoutSend(ask_stdout=1)
         )
 
-        while 1:
+        while True:
             try:
                 item = next(input_stream).reply_stdout
                 print(item, end='')

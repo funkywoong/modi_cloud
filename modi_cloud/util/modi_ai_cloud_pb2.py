@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"F\n\x0bObjectsSend\x12\x13\n\x0btrain_array\x18\x01 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x02 \x01(\x0c\x12\r\n\x05model\x18\x03 \x01(\x0c\" \n\nStdoutSend\x12\x12\n\nask_stdout\x18\x01 \x01(\x05\"#\n\x0bStdoutReply\x12\x14\n\x0creply_stdout\x18\x01 \x01(\t\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\x91\x03\n\x12\x44\x61ta_Model_Handler\x12>\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12\x43\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReply\x12\x44\n\x0fMonitorLearning\x12\x16.modi_cloud.StdoutSend\x1a\x17.modi_cloud.StdoutReply0\x01\x62\x06proto3'
+  serialized_pb=b'\n\x13modi_ai_cloud.proto\x12\nmodi_cloud\"i\n\x0bObjectsSend\x12\r\n\x05model\x18\x01 \x01(\x0c\x12\x13\n\x0btrain_array\x18\x02 \x01(\x0c\x12\x13\n\x0blabel_array\x18\x03 \x01(\x0c\x12\x12\n\nmodel_type\x18\x04 \x01(\t\x12\r\n\x05param\x18\x05 \x01(\x0c\" \n\nStdoutSend\x12\x12\n\nask_stdout\x18\x01 \x01(\x05\"#\n\x0bStdoutReply\x12\x14\n\x0creply_stdout\x18\x01 \x01(\t\",\n\x14TransferCompleteSend\x12\x14\n\x0c\x61sk_transfer\x18\x01 \x01(\x05\",\n\x14LearningCompleteSend\x12\x14\n\x0c\x61sk_learning\x18\x01 \x01(\x05\"/\n\x15TransferCompleteReply\x12\x16\n\x0ereply_transfer\x18\x01 \x01(\x05\"/\n\x15LearningCompleteReply\x12\x16\n\x0ereply_learning\x18\x01 \x01(\x05\"#\n\nModelReply\x12\x15\n\rtrained_model\x18\x01 \x01(\x0c\x32\x91\x03\n\x12\x44\x61ta_Model_Handler\x12>\n\x0bSendObjects\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12\x43\n\x10SendObjectsAgain\x12\x17.modi_cloud.ObjectsSend\x1a\x16.modi_cloud.ModelReply\x12W\n\x10TransferComplete\x12 .modi_cloud.TransferCompleteSend\x1a!.modi_cloud.TransferCompleteReply\x12W\n\x10LearningComplete\x12 .modi_cloud.LearningCompleteSend\x1a!.modi_cloud.LearningCompleteReply\x12\x44\n\x0fMonitorLearning\x12\x16.modi_cloud.StdoutSend\x1a\x17.modi_cloud.StdoutReply0\x01\x62\x06proto3'
 )
 
 
@@ -34,22 +34,36 @@ _OBJECTSSEND = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='train_array', full_name='modi_cloud.ObjectsSend.train_array', index=0,
+      name='model', full_name='modi_cloud.ObjectsSend.model', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='label_array', full_name='modi_cloud.ObjectsSend.label_array', index=1,
+      name='train_array', full_name='modi_cloud.ObjectsSend.train_array', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='model', full_name='modi_cloud.ObjectsSend.model', index=2,
+      name='label_array', full_name='modi_cloud.ObjectsSend.label_array', index=2,
       number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='model_type', full_name='modi_cloud.ObjectsSend.model_type', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='param', full_name='modi_cloud.ObjectsSend.param', index=4,
+      number=5, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -67,7 +81,7 @@ _OBJECTSSEND = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=35,
-  serialized_end=105,
+  serialized_end=140,
 )
 
 
@@ -98,8 +112,8 @@ _STDOUTSEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=107,
-  serialized_end=139,
+  serialized_start=142,
+  serialized_end=174,
 )
 
 
@@ -130,8 +144,8 @@ _STDOUTREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=141,
-  serialized_end=176,
+  serialized_start=176,
+  serialized_end=211,
 )
 
 
@@ -162,8 +176,8 @@ _TRANSFERCOMPLETESEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=178,
-  serialized_end=222,
+  serialized_start=213,
+  serialized_end=257,
 )
 
 
@@ -194,8 +208,8 @@ _LEARNINGCOMPLETESEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=224,
-  serialized_end=268,
+  serialized_start=259,
+  serialized_end=303,
 )
 
 
@@ -226,8 +240,8 @@ _TRANSFERCOMPLETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=270,
-  serialized_end=317,
+  serialized_start=305,
+  serialized_end=352,
 )
 
 
@@ -258,8 +272,8 @@ _LEARNINGCOMPLETEREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=319,
-  serialized_end=366,
+  serialized_start=354,
+  serialized_end=401,
 )
 
 
@@ -290,8 +304,8 @@ _MODELREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=368,
-  serialized_end=403,
+  serialized_start=403,
+  serialized_end=438,
 )
 
 DESCRIPTOR.message_types_by_name['ObjectsSend'] = _OBJECTSSEND
@@ -369,8 +383,8 @@ _DATA_MODEL_HANDLER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=406,
-  serialized_end=807,
+  serialized_start=441,
+  serialized_end=842,
   methods=[
   _descriptor.MethodDescriptor(
     name='SendObjects',

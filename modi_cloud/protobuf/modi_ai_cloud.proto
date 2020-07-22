@@ -17,9 +17,11 @@ service Data_Model_Handler{
 // }
 
 message ObjectsSend{
-    bytes train_array = 1;
-    bytes label_array = 2;
-    bytes model = 3;
+    bytes model = 1;
+    bytes train_array = 2;
+    bytes label_array = 3;
+    string model_type = 4;
+    bytes param = 5;
 
     /*
     enum Model_type= {
